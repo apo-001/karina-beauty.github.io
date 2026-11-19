@@ -1458,7 +1458,7 @@
 
 <script>
   /* ============================================================
-     ГАЛЕРЕЯ — добавлены ваши фото
+     ГАЛЕРЕЯ
      ============================================================ */
   const GALLERY_IMAGES = [
     { src: "images/work-1.jpg", alt: "Нежный розовый маникюр с блестками" },
@@ -1518,9 +1518,7 @@
   /* ============================================================
      ОТЗЫВЫ
      ============================================================ */
-  const REVIEWS = [
-    // сюда добавляются только реальные отзывы гостей
-  ];
+  const REVIEWS = [];
 
   function renderReviews() {
     const grid = document.getElementById('reviewsGrid');
@@ -1599,27 +1597,32 @@
   const VK_LINK_KARINA = 'https://vk.me/id212234631';
   const VK_LINK_POLINA = 'https://vk.me/id886171096';
 
-  async function copyAndOpenVk(text, okMessage, vkLink) {
-    let copied = false;
+  function copyAndOpenVk(text, okMessage, vkLink) {
+    // 1. Мгновенно открываем нужного мастера
+    window.open(vkLink, '_blank', 'noopener,noreferrer');
+    
+    // 2. Показываем уведомление
+    showToast(okMessage + ' — вставьте в поле сообщения (Ctrl+V)');
+
+    // 3. Копируем текст
     if (navigator.clipboard && window.isSecureContext) {
-      try { await navigator.clipboard.writeText(text); copied = true; } catch {}
+      navigator.clipboard.writeText(text).catch(() => {
+        fallbackCopy(text);
+      });
+    } else {
+      fallbackCopy(text);
     }
-    if (!copied) {
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
-      try { document.execCommand('copy'); copied = true; } catch {}
-      document.body.removeChild(ta);
-    }
-    showToast(copied
-      ? okMessage + ' — вставьте в поле сообщения (Ctrl+V)'
-      : 'Скопируйте текст вручную и вставьте в ВК');
-    setTimeout(() => {
-      window.open(vkLink, '_blank', 'noopener,noreferrer');
-    }, 500);
+  }
+
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta);
   }
 
   /* ============================================================
@@ -1655,7 +1658,7 @@
   }
 
   /* ============================================================
-     ФОРМА ЗАПИСИ (С распределением мастеров)
+     ФОРМА ЗАПИСИ (РАСПРЕДЕЛЕНИЕ МАСТЕРОВ)
      ============================================================ */
   document.getElementById('bookingForm').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -1699,9 +1702,15 @@
     if (time) lines.push('Время: ' + time);
     if (comment) lines.push('Комментарий: ' + comment);
 
-    // Распределение: если маникюр -> Полине, остальное -> Карине
+    // Жесткая проверка: если в строке есть слово "Маникюр", "Наращивание" или "Френч" -> Полина
     let targetLink = VK_LINK_KARINA;
-    if (service.includes('Маникюр') || service.includes('Наращивание') || service.includes('Френч')) {
+    
+    if (
+      service === "Маникюр (комбинированный)" || 
+      service === "Маникюр (с покрытием)" || 
+      service === "Наращивание" || 
+      service === "Френч"
+    ) {
       targetLink = VK_LINK_POLINA;
     }
 
