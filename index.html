@@ -1518,7 +1518,18 @@
   /* ============================================================
      ОТЗЫВЫ
      ============================================================ */
-  const REVIEWS = [];
+  const REVIEWS = [
+    {
+      name: "Елена",
+      rating: 5,
+      text: "Ходила на маникюр к Полине — осталась в полном восторге! Очень аккуратно, форма идеальная, покрытие держится уже третью неделю без сколов. Атмосфера в студии очень уютная, обязательно вернусь!"
+    },
+    {
+      name: "Людмила",
+      rating: 5,
+      text: "Прекрасная студия! Делала брови у Карины — получилось именно так, как я хотела, даже лучше. Мастер очень внимательная, подсказала, как ухаживать. Спасибо большое за красоту и заботу!"
+    }
+  ];
 
   function renderReviews() {
     const grid = document.getElementById('reviewsGrid');
@@ -1598,13 +1609,8 @@
   const VK_LINK_POLINA = 'https://vk.me/id886171096';
 
   function copyAndOpenVk(text, okMessage, vkLink) {
-    // 1. Мгновенно открываем нужного мастера
     window.open(vkLink, '_blank', 'noopener,noreferrer');
-    
-    // 2. Показываем уведомление
     showToast(okMessage + ' — вставьте в поле сообщения (Ctrl+V)');
-
-    // 3. Копируем текст
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(text).catch(() => {
         fallbackCopy(text);
@@ -1702,7 +1708,6 @@
     if (time) lines.push('Время: ' + time);
     if (comment) lines.push('Комментарий: ' + comment);
 
-    // Жесткая проверка: если в строке есть слово "Маникюр", "Наращивание" или "Френч" -> Полина
     let targetLink = VK_LINK_KARINA;
     
     if (
