@@ -1346,7 +1346,7 @@
       <div class="booking-info reveal">
         <div class="label" style="font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:14px;">Запись</div>
         <h2 id="bookingTitle">Запишитесь на приём</h2>
-        <p>Заполните форму — и мы свяжемся с вами, чтобы подтвердить время. Или напишите нам напрямую в ВКонтакте.</p>
+        <p>Заполните форму — и мы свяжемся с вами, чтобы подтвердить время. Или напишите нам напрямую во ВКонтакте.</p>
         <address>
           <ul class="contact-list">
             <li>
@@ -1458,7 +1458,7 @@
 
 <script>
   /* ============================================================
-     ГАЛЕРЕЯ — добавлены ваши фото (не забудьте положить их в папку images)
+     ГАЛЕРЕЯ — добавлены ваши фото
      ============================================================ */
   const GALLERY_IMAGES = [
     { src: "images/work-1.jpg", alt: "Нежный розовый маникюр с блестками" },
@@ -1596,9 +1596,10 @@
   /* ============================================================
      КОПИРОВАНИЕ + ОТКРЫТИЕ ВК
      ============================================================ */
-  const VK_LINK = 'https://vk.me/id212234631';
+  const VK_LINK_KARINA = 'https://vk.me/id212234631';
+  const VK_LINK_POLINA = 'https://vk.me/id886171096';
 
-  async function copyAndOpenVk(text, okMessage) {
+  async function copyAndOpenVk(text, okMessage, vkLink) {
     let copied = false;
     if (navigator.clipboard && window.isSecureContext) {
       try { await navigator.clipboard.writeText(text); copied = true; } catch {}
@@ -1617,7 +1618,7 @@
       ? okMessage + ' — вставьте в поле сообщения (Ctrl+V)'
       : 'Скопируйте текст вручную и вставьте в ВК');
     setTimeout(() => {
-      window.open(VK_LINK, '_blank', 'noopener,noreferrer');
+      window.open(vkLink, '_blank', 'noopener,noreferrer');
     }, 500);
   }
 
@@ -1654,7 +1655,7 @@
   }
 
   /* ============================================================
-     ФОРМА ЗАПИСИ
+     ФОРМА ЗАПИСИ (С распределением мастеров)
      ============================================================ */
   document.getElementById('bookingForm').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -1698,11 +1699,17 @@
     if (time) lines.push('Время: ' + time);
     if (comment) lines.push('Комментарий: ' + comment);
 
-    copyAndOpenVk(lines.join('\n'), 'Текст заявки скопирован');
+    // Распределение: если маникюр -> Полине, остальное -> Карине
+    let targetLink = VK_LINK_KARINA;
+    if (service.includes('Маникюр') || service.includes('Наращивание') || service.includes('Френч')) {
+      targetLink = VK_LINK_POLINA;
+    }
+
+    copyAndOpenVk(lines.join('\n'), 'Текст заявки скопирован', targetLink);
   });
 
   /* ============================================================
-     ФОРМА ОТЗЫВА
+     ФОРМА ОТЗЫВА (Всегда Карине)
      ============================================================ */
   document.getElementById('reviewForm').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -1731,7 +1738,7 @@
       'Отзыв: ' + text,
     ];
 
-    copyAndOpenVk(lines.join('\n'), 'Текст отзыва скопирован');
+    copyAndOpenVk(lines.join('\n'), 'Текст отзыва скопирован', VK_LINK_KARINA);
   });
 
   /* ============================================================
